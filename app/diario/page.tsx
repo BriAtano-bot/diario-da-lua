@@ -36,23 +36,37 @@ export default function Diario() {
   };
 
   const handleGuardar = () => {
+    // 1. Obter a data de hoje formatada (AAAA-MM-DD)
+    const hoje = new Date().toISOString().split('T')[0];
+    
+    // 2. Obter os dados existentes
     const dadosAtuais = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
-    dadosAtuais["2026-05-30"] = { 
-      ...dadosAtuais["2026-05-30"], 
+    
+    // 3. Criar ou atualizar o registo desta data específica
+    dadosAtuais[hoje] = {
+      ...dadosAtuais[hoje], 
       diario: true,
-      imagem: imagemUrl
+      texto: texto,         // Agora guarda o teu texto!
+      humor: humor,
+      ansiedade: ansiedade,
+      stress: stress,
+      imagem: imagemUrl,
+      data: hoje
     };
+    
+    // 4. Gravar de volta no localStorage
     localStorage.setItem("diario_da_lua_registos", JSON.stringify(dadosAtuais));
-    alert("O teu desabafo e a tua memória visual foram guardados com carinho! 🌙🎨");
+    
+    alert("O teu registo de hoje foi guardado com carinho! 🌙🎨");
     router.push("/calendario");
   };
 
   return (
     <main className="relative flex min-h-screen w-full flex-col items-center justify-start bg-gradient-to-tr from-[#a9b7df] via-[#cfd6eb] to-[#dcd6e8] px-4 py-8 text-[#2c3345] antialiased md:px-8 overflow-y-auto diario-font">
-      
+
       <style jsx global>{`
         @import url('https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&display=swap');
-        
+
         .diario-font {
           font-family: 'Caveat', cursive, sans-serif;
         }
@@ -78,7 +92,6 @@ export default function Diario() {
             <p className="text-xl text-[#5a6580] font-medium">Escreve, monitoriza e guarda as tuas criações de hoje.</p>
           </div>
 
-          {/* ESCALAS */}
           <div className="flex flex-col gap-4 bg-white/20 p-5 rounded-2xl border border-white/20">
             <div>
               <h3 className="text-xl font-bold text-[#343b4f] mb-1">Como está o teu Humor?</h3>
@@ -115,10 +128,8 @@ export default function Diario() {
             </div>
           </div>
 
-          {/* ÁREA DE TEXTO */}
           <textarea value={texto} onChange={(e) => setTexto(e.target.value)} placeholder="Como correu o teu dia? Escreve livremente..." className="w-full min-h-[200px] rounded-2xl bg-white/40 p-5 text-2xl border border-white/20 focus:outline-none focus:ring-2 focus:ring-[#8fa0cc]/40 placeholder-[#6b7693]/60 text-[#2c3345] font-medium resize-none shadow-inner leading-relaxed" />
 
-          {/* SEPARADOR DE UPLOAD */}
           <div className="bg-white/25 p-5 rounded-2xl border border-white/20 flex flex-col items-center gap-4">
             <div className="text-center">
               <h3 className="text-2xl font-bold text-[#343b4f] mb-1">🎨 Guardar um Brilho Visual</h3>
@@ -128,20 +139,17 @@ export default function Diario() {
             <label className="cursor-pointer flex flex-col items-center justify-center w-full min-h-[120px] rounded-xl border-2 border-dashed border-[#8fa0cc]/40 bg-white/30 hover:bg-white/50 transition-colors p-4 text-center">
               <span className="text-4xl mb-1">📸</span>
               <span className="text-xl font-bold text-[#4e5870]">Clica aqui para escolher uma imagem</span>
-              <span className="text-sm text-[#6b7693]/80">(Fotografia, desenho ou captura de ecrã)</span>
               <input type="file" accept="image/*" onChange={handleImagemUpload} className="hidden" />
             </label>
 
             {imagemUrl && (
               <div className="mt-2 p-3 bg-white rounded-2xl shadow-md border border-white/40 max-w-xs flex flex-col items-center">
                 <img src={imagemUrl} alt="Antevisão" className="rounded-xl max-h-[200px] object-cover" />
-                <span className="text-lg font-bold text-[#5a6580] mt-2">✨ O teu registo visual</span>
                 <button type="button" onClick={() => setImagemUrl(null)} className="mt-1 text-sm font-bold text-red-400 hover:text-red-600 transition-colors">Remover foto ❌</button>
               </div>
             )}
           </div>
 
-          {/* ACÇÕES */}
           <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 pt-2 border-t border-white/20">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 bg-white/20 p-3 rounded-2xl border border-white/10">
               <span className="text-lg font-bold text-[#343b4f] whitespace-nowrap">🙌 Partilhar com Apoio:</span>
@@ -149,7 +157,7 @@ export default function Diario() {
                 <option value="">Escolher...</option>
                 {contactosApoio.map((c) => <option key={c} value={c}>{c}</option>)}
               </select>
-              <button type="button" onClick={() => alert(contactoSelecionado ? `💌 Enviado para ${contactoSelecionado}` : "Escolhe um contacto")} className="sm:ml-2 px-4 py-1 bg-[#b4c3eb] hover:bg-[#9faed6] text-[#2c3345] text-lg font-bold rounded-xl transition-colors">Enviar 💌</button>
+              <button type="button" onClick={() => alert("Função de envio em breve!")} className="sm:ml-2 px-4 py-1 bg-[#b4c3eb] hover:bg-[#9faed6] text-[#2c3345] text-lg font-bold rounded-xl transition-colors">Enviar 💌</button>
             </div>
 
             <button type="button" onClick={handleGuardar} className="px-8 py-3 rounded-full bg-[#8fa0cc]/80 text-white font-bold text-xl hover:bg-[#8fa0cc] shadow-sm hover:shadow transition-all duration-300 hover:-translate-y-0.5 active:scale-95 focus:outline-none text-center">
