@@ -11,6 +11,7 @@ export default function Diario() {
   const [stress, setStress] = useState("");
   const [contactoSelecionado, setContactoSelecionado] = useState("");
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [menuAberto, setMenuAberto] = useState(false);
 
   const escalaHumor = [
     { emoji: "💖", label: "Incrível" }, { emoji: "🙂", label: "Bem" },
@@ -51,7 +52,6 @@ export default function Diario() {
     <main className="relative flex min-h-screen w-full flex-col items-center justify-start px-4 py-8 antialiased overflow-hidden">
       <div className="moon-bg" />
 
-      {/* Modal de Confirmação */}
       {mostrarModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
           <div className="glass-panel max-w-sm w-full text-center">
@@ -99,19 +99,27 @@ export default function Diario() {
             ))}
           </div>
 
-          {/* Área de Texto */}
           <textarea value={texto} onChange={(e) => setTexto(e.target.value)} className="input-glass w-full min-h-[150px] text-lg resize-none" placeholder="O que tens no coração?" />
 
           {/* Ações Finais */}
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 border-t border-white/10">
-            <div className="flex items-center gap-2">
-              <select onChange={(e) => setContactoSelecionado(e.target.value)} className="input-glass">
-                <option value="">Apoio...</option>
-                {contactosApoio.map(c => <option key={c} value={c}>{c}</option>)}
-              </select>
-              <button onClick={handleEnviarEmail} className="btn-glass px-4 py-2 rounded-xl">Enviar 💌</button>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-2 relative">
+              <div className="input-glass flex justify-between items-center cursor-pointer text-white/70 w-full" onClick={() => setMenuAberto(!menuAberto)}>
+                {contactoSelecionado || "Apoio..."}
+                <span className="text-xs">▼</span>
+              </div>
+              {menuAberto && (
+                <div className="absolute top-full mt-2 w-full bg-[#05070a] border border-white/20 rounded-xl overflow-hidden z-50 shadow-xl">
+                  {contactosApoio.map((c) => (
+                    <div key={c} onClick={() => { setContactoSelecionado(c); setMenuAberto(false); }} className="px-4 py-3 hover:bg-white/10 cursor-pointer text-white">
+                      {c}
+                    </div>
+                  ))}
+                </div>
+              )}
+              <button onClick={handleEnviarEmail} className="btn-glass px-4 py-3 rounded-xl whitespace-nowrap">Enviar 💌</button>
             </div>
-            <button onClick={() => setMostrarModal(true)} className="btn-primary-glass w-full md:w-auto px-8 py-3 rounded-xl font-medium text-lg">Guardar Registo 📅</button>
+            <button onClick={() => setMostrarModal(true)} className="btn-primary-glass w-full px-8 py-3 rounded-xl font-medium text-lg">Guardar Registo 📅</button>
           </div>
         </div>
       </div>

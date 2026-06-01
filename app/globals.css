@@ -4,6 +4,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .bg-gemini {
+    background: linear-gradient(to right, #86EFAC, #3B82F6);
+  }
+  
+  .text-gemini {
+    background: linear-gradient(to right, #86EFAC, #3B82F6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
 body {
   font-family: 'Arima', cursive, sans-serif;
   background-color: #05070a;

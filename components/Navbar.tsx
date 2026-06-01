@@ -14,14 +14,17 @@ export default function Navbar() {
   ];
 
   return (
-    <nav className="fixed bottom-6 left-4 right-4 bg-white/10 backdrop-blur-lg border border-white/20 rounded-2xl px-2 py-3 flex justify-around items-center z-50">
+    <nav className="fixed bottom-6 left-4 right-4 bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl px-2 py-3 flex justify-around items-center z-50">
       {links.map((link) => {
         const active = pathname === link.href;
+
+        const base = "px-4 py-2 text-[11px] sm:text-xs rounded-xl transition-all duration-300 font-medium tracking-wide";
         
-        const base = "px-3 py-1.5 text-[10px] sm:text-xs rounded-xl transition-all duration-300 font-medium";
-        const activeStyle = active 
-          ? "bg-[#C4B5D4]/80 text-[#2E1065] border border-[#C4B5D4]/80" 
-          : "text-[#581C87] hover:bg-[#C4B5D4]/20";
+        // Gradiente do verde ao azul (nossas cores) para o estado ativo
+        // Mantivemos a opacidade controlada para manter a calma visual
+        const activeStyle = active
+          ? "bg-gradient-to-r from-[#86EFAC] to-[#3B82F6] text-[#0f172a] shadow-lg" 
+          : "text-white/70 hover:bg-white/10";
 
         return (
           <Link

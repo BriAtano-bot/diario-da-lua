@@ -65,12 +65,13 @@ export default function Checkup() {
           {/* 1. Coisa Boa */}
           <div className="p-4 rounded-2xl border border-white/5">
             <h3 className="text-lg font-light text-[#cbd5e1] mb-3">🌸 Uma coisa boa que aconteceu hoje?</h3>
-            <input 
-              type="text" 
-              value={coisaBoa} 
-              onChange={(e) => setCoisaBoa(e.target.value)} 
-              placeholder="Até o mais pequeno detalhe conta..." 
-              className="input-glass w-full" 
+            <input
+              type="text"
+              value={coisaBoa}
+              onChange={(e) => setCoisaBoa(e.target.value)}
+              placeholder="Até o mais pequeno detalhe conta..."
+              className="input-glass w-full"
+              autoComplete="off"
             />
           </div>
 
