@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // 1. Adicionamos a importação
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
       <body className="relative min-h-screen">
-        
+
         {/* Container das Luas que chama as classes do globals.css */}
         <div className="luas-container">
           <div className="lua-1"></div>
@@ -35,6 +36,7 @@ export default function RootLayout({
         <Navbar />
         <main>{children}</main>
         <Analytics />
+        <SpeedInsights /> {/* 2. Adicionamos o componente aqui */}
       </body>
     </html>
   );
