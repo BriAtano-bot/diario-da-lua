@@ -1,6 +1,7 @@
 import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react"; // Adicionada esta linha
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
@@ -31,10 +32,10 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
-      <body className="bg-[#F7F4FA] text-gray-800">
-  {children}
-{/* <Navbar /> */}
-</body>
-    </html>
+<body className="bg-[#F7F4FA] text-gray-800">
+        <Navbar />
+        {children}
+        <Analytics />
+      </body>    </html>
   );
 }

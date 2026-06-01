@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Caveat } from "next/font/google";
+import { Arima } from "next/font/google";
 
-const handwriting = Caveat({
+// Usamos Arima para combinar com as outras páginas
+const arima = Arima({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "700"],
   display: "swap",
 });
 
@@ -20,9 +21,8 @@ export default function Home() {
   ];
 
   return (
-    <main className={`relative flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-tr from-[#a9b7df] via-[#cfd6eb] to-[#dcd6e8] px-4 py-8 text-[#2c3345] antialiased md:px-8 overflow-hidden ${handwriting.className}`}>
-      
-      {/* ESTILOS INJETADOS PARA AS ANIMAÇÕES SUAVES DE RESPIRAÇÃO (STIMMING VISUAL) */}
+    <main className={`relative flex min-h-screen w-full flex-col items-center justify-center bg-gradient-to-tr from-[#a9b7df] via-[#cfd6eb] to-[#dcd6e8] px-4 py-8 text-[#2c3345] antialiased md:px-8 overflow-hidden ${arima.className}`}>
+
       <style jsx global>{`
         @keyframes float-slow-1 {
           0%, 100% { transform: translate(0px, 0px) scale(1); }
@@ -41,16 +41,13 @@ export default function Home() {
         .animate-float-3 { animation: float-slow-3 22s ease-in-out infinite; }
       `}</style>
 
-      {/* Formas orgânicas e círculos em movimento lento no fundo */}
+      {/* Formas orgânicas */}
       <div className="absolute top-12 left-10 md:left-20 w-72 h-72 rounded-full bg-[#b4c3eb]/40 blur-[40px] pointer-events-none animate-float-1" />
       <div className="absolute bottom-10 right-10 md:right-32 w-96 h-96 rounded-full bg-[#ceddc3]/50 blur-[50px] pointer-events-none animate-float-2" />
       <div className="absolute top-1/3 right-1/4 w-64 h-64 rounded-[40%_60%_70%_30%_/_40%_50%_60%_50%] bg-[#d3cae0]/40 blur-[45px] pointer-events-none animate-float-3" />
       <div className="absolute bottom-12 left-1/4 w-80 h-80 rounded-full bg-[#c6d0eb]/30 blur-[60px] pointer-events-none animate-float-1" />
 
-      {/* Contentor Principal Centralizado */}
       <div className="relative z-10 w-full max-w-4xl text-center flex flex-col items-center">
-        
-        {/* Cabeçalho */}
         <header className="mb-10 max-w-xl">
           <h1 className="text-5xl font-bold tracking-wide md:text-7xl text-[#3b4359]">
             Diário da Lua
@@ -61,7 +58,6 @@ export default function Home() {
           </p>
         </header>
 
-        {/* Grelha de Navegação */}
         <nav className="grid w-full gap-5 sm:grid-cols-2">
           {menuItems.map((item) => (
             <button
@@ -84,11 +80,9 @@ export default function Home() {
           ))}
         </nav>
 
-        {/* Rodapé */}
         <footer className="mt-12 text-sm tracking-widest text-[#6b7693]/70 uppercase font-bold">
           ⚓ Estás num lugar seguro
         </footer>
-
       </div>
     </main>
   );
