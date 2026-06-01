@@ -1,21 +1,13 @@
 import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
-import { Analytics } from "@vercel/analytics/react"; // Adicionada esta linha
+import { Analytics } from "@vercel/analytics/react";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
+const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,10 +24,18 @@ export default function RootLayout({
       lang="en"
       className={cn("h-full", "antialiased", geistSans.variable, geistMono.variable, "font-sans", inter.variable)}
     >
-<body className="bg-[#F7F4FA] text-gray-800">
+      <body className="relative min-h-screen">
+        
+        {/* Container das Luas que chama as classes do globals.css */}
+        <div className="luas-container">
+          <div className="lua-1"></div>
+          <div className="lua-2"></div>
+        </div>
+
         <Navbar />
-        {children}
+        <main>{children}</main>
         <Analytics />
-      </body>    </html>
+      </body>
+    </html>
   );
 }
