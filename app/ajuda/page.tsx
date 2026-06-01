@@ -49,6 +49,15 @@ export default function Ajuda() {
             </p>
           </section>
 
+{/* CONTACTO DE SUPORTE */}
+<div className="mt-6 pt-6 border-t border-white/20 text-center">
+  <p className="text-lg text-[#5a6580]">
+    Alguma dúvida ou sugestão sobre o Diário da Lua? 
+    <br />
+    Fala comigo em: <a href="mailto:diario.da.lua.faq@gmail.com" className="font-bold text-[#8fa0cc] hover:underline">diario.da.lua.faq@gmail.com</a>
+  </p>
+</div>
+
           {/* Bloco 4 */}
           <section className="bg-[#dcdbd9]/50 p-5 rounded-2xl border border-[#c9c7c4]">
             <h2 className="text-2xl font-bold mb-2 text-[#2c3345] flex items-center gap-2">🛡️ O nosso compromisso</h2>
