@@ -148,6 +148,15 @@ export default function Apoio() {
             </div>
           </div>
 
+{/* CONTACTO DE SUPORTE */}
+<div className="mt-6 pt-6 border-t border-white/20 text-center">
+  <p className="text-lg text-[#5a6580]">
+    Alguma dúvida ou sugestão sobre o Diário da Lua? 
+    <br />
+    Fala comigo em: <a href="mailto:diario.da.lua.faq@gmail.com" className="font-bold text-[#8fa0cc] hover:underline">diario.da.lua.faq@gmail.com</a>
+  </p>
+</div>
+
           <div className="bg-[#ceddc3]/30 p-5 rounded-2xl border border-[#b2c7a3]/30 text-center mt-2">
             <h4 className="text-xl font-bold text-[#44523a] mb-1">🌱 Um mini exercício para agora:</h4>
             <p className="text-lg text-[#4e5a45]">Inspira em 4 segundos... Segura por 4 segundos... Expira em 4 segundos.</p>
