@@ -2,61 +2,72 @@
 
 import { useRouter } from "next/navigation";
 import { Arima } from "next/font/google";
+import { BookOpen, CalendarDays, CheckSquare, BarChart3, HeartPulse } from "lucide-react";
+import { useEffect, useState } from "react";
 
-const arima = Arima({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  display: "swap",
-});
+const arima = Arima({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
 
 export default function Home() {
   const router = useRouter();
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Deteta o tamanho do ecrã para ajustar o círculo
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const menuItems = [
-    { name: "Diário", path: "/diario", icon: "🌙", desc: "O teu espaço seguro para libertar pensamentos e respirar." },
-    { name: "Agenda", path: "/calendario", icon: "📅", desc: "Organiza o teu dia a dia ao teu próprio ritmo, sem pressões." },
-    { name: "Check-Up", path: "/checkup", icon: "🩺", desc: "Um momento para sintonizares com as tuas emoções e energia." },
-    { name: "Apoio", path: "/apoio", icon: "🙌", desc: "Ferramentas rápidas para acalmar a mente quando precisares." }
+    { name: "Diário", path: "/diario", icon: BookOpen, color: "text-cyan-400" },
+    { name: "Agenda", path: "/calendario", icon: CalendarDays, color: "text-emerald-400" },
+    { name: "Check-Up", path: "/checkup", icon: CheckSquare, color: "text-cyan-300" },
+    { name: "Estatísticas", path: "/estatisticas", icon: BarChart3, color: "text-emerald-300" },
+    { name: "Apoio", path: "/apoio", icon: HeartPulse, color: "text-cyan-400" },
   ];
 
   return (
-    <main className={`relative flex min-h-screen w-full flex-col items-center justify-center px-4 py-8 antialiased overflow-hidden ${arima.className}`}>
-      
-      {/* O nosso fundo imutável */}
+    <main className={`min-h-screen flex items-center justify-center p-6 overflow-hidden ${arima.className}`}>
       <div className="moon-bg" />
 
-      <div className="relative z-10 w-full max-w-4xl text-center flex flex-col items-center">
-        <header className="mb-10 max-w-xl">
-          <h1 className="text-5xl md:text-7xl font-light tracking-wide text-[#cbd5e1] mb-4">
-            Diário da Lua
-          </h1>
-          <p className="text-xl md:text-2xl text-[#d1d5db] font-light leading-relaxed">
-            O teu espaço seguro para respirar, sentir e crescer. <br className="hidden sm:inline" />
-            Cada pequeno passo conta.
-          </p>
-        </header>
+      <div className="relative flex items-center justify-center w-full max-w-2xl aspect-square">
+        {/* IMAGEM CENTRAL */}
+        <div className="absolute z-0 w-60 h-60 md:w-[450px] md:h-[450px]">
+          <img
+            src="/gemini2.png"
+            alt="Coração e Cérebro"
+            className="w-full h-full object-contain drop-shadow-[0_0_60px_rgba(34,211,238,0.5)]"
+          />
+        </div>
 
-        <nav className="grid w-full gap-5 sm:grid-cols-2">
-          {menuItems.map((item) => (
-            <button
+        {/* BOTÕES EM ÓRBITA RESPONSIVA */}
+        {menuItems.map((item, index) => {
+          const angle = (index / menuItems.length) * 2 * Math.PI - Math.PI / 2;
+          const radius = isMobile ? 130 : 250; 
+          
+          return (
+            <div
               key={item.name}
-              onClick={() => router.push(item.path)}
-              className="glass-panel group flex flex-col items-start text-left transition-all hover:scale-[1.02] focus:outline-none"
+              className="absolute transition-all duration-500"
+              style={{
+                left: `calc(50% + ${Math.cos(angle) * radius}px)`,
+                top: `calc(50% + ${Math.sin(angle) * radius}px)`,
+                transform: 'translate(-50%, -50%)',
+              }}
             >
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-3xl">{item.icon}</span>
-                <h2 className="text-2xl font-medium text-[#cbd5e1]">{item.name}</h2>
-              </div>
-              <p className="text-lg text-[#d1d5db] font-light leading-relaxed">
-                {item.desc}
-              </p>
-            </button>
-          ))}
-        </nav>
-
-        <footer className="mt-12 text-sm tracking-widest text-[#94a3b8] uppercase font-bold opacity-70">
-          ⚓ Estás num lugar seguro
-        </footer>
+              <button
+                onClick={() => router.push(item.path)}
+                className="gradient-border flex flex-col items-center justify-center p-4 w-24 h-24 md:p-6 md:w-32 md:h-32 rounded-3xl bg-white/[0.02] backdrop-blur-[6px] border border-white/[0.03] transition-all hover:scale-110 hover:bg-white/[0.06] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.5)] group"
+              >
+                <item.icon size={isMobile ? 28 : 40} className={`${item.color} mb-1 md:mb-2 transition-colors`} />
+                <span className={`text-[8px] md:text-xs font-bold uppercase tracking-wider ${item.color}`}>
+                  {item.name}
+                </span>
+              </button>
+            </div>
+          );
+        })}
       </div>
     </main>
   );
