@@ -1,0 +1,51 @@
+"menu": {
+    "home": "Home",
+    "diary": "Diary",
+    "schedule": "Schedule", 
+    "checkup": "Check-up",
+    "stats": "Stats"
+  },
+  "diary": {
+    "title": "🌙 Moon Diary",
+    "back": "← Back",
+    "mood": "How is your mood?",
+    "anxiety": "Anxiety",
+    "stress": "Stress",
+    "placeholder": "What's on your heart?",
+    "support": "Support...",
+    "send": "Send 💌",
+    "save": "Save Entry 📅",
+    "confirm": "Save entry?",
+    "confirmBtn": "Confirm",
+    "backBtn": "Back",
+    "humorLabels": ["Amazing", "Good", "Neutral", "Low", "Exhausted"],
+    "levelLabels": ["Low", "Medium", "High", "Critical"]
+  },
+  "calendar": {
+    "title": "📅 My Altar of Memories",
+    "menu": "← Menu",
+    "dayDetail": "Mirror of the Day",
+    "noSelection": "Select a day to view your memories.",
+    "noRecords": "No records for this day.",
+    "mood": "Mood:",
+    "anxiety": "Anxiety:",
+    "stress": "Stress:",
+    "goodThing": "Good thing:",
+    "sleep": "Sleep:",
+    "energy": "Energy:",
+    "care": "Self-care:"
+  },
+{
+  "checkup": {
+    "header": "Balance",
+    "title": "Check-up",
+    "back": "← Back",
+    "goodThing": "Tell me one good thing about today ...",
+    "placeholder": "Write here...",
+    "sleep": "Sleep?",
+    "energy": "Energy?",
+    "save": "Save",
+    "sleepLabels": ["Exhausted", "Poor", "Average", "Good", "Beautifully"],
+    "energyLabels": ["Drained", "Low", "Normal", "Full"]
+  }
+}

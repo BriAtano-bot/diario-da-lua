@@ -1,0 +1,35 @@
+{
+  "home": {
+    "diary": "Diário",
+    "schedule": "Agenda",
+    "checkup": "Check-up",
+    "stats": "Estatísticas",
+    "support": "Apoio"
+  },
+  "menu": {
+    "home": "Início",
+    "diary": "Diário",
+    "schedule": "Agenda",
+    "checkup": "Check-up",
+    "stats": "Estatísticas",
+    "help": "Ajuda"
+  },
+  "diary": {
+    "title": "🌙 Diário da Lua",
+    "back": "← Voltar",
+    "mood": "Como está o teu humor?",
+    "anxiety": "Ansiedade",
+    "stress": "Stress",
+    "placeholder": "O que tens no coração?",
+    "send": "Enviar 💌",
+    "save": "Guardar Entrada 📅"
+  },
+  "calendar": {
+    "title": "📅 A Minha Agenda",
+    "menu": "← Menu"
+  },
+  "checkup": {
+    "title": "✨ Equilíbrio Diário",
+    "back": "← Voltar"
+  }
+}

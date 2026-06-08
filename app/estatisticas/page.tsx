@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
 import { Arima } from "next/font/google";
 import { ArrowLeft, TrendingUp, Calendar, Target } from "lucide-react";
 
@@ -8,12 +9,34 @@ const arima = Arima({ subsets: ["latin"], weight: ["400", "700"], display: "swap
 
 export default function Estatisticas() {
   const router = useRouter();
+  const [lang, setLang] = useState("pt");
+  const [carregado, setCarregado] = useState(false);
+
+  useEffect(() => {
+    setLang(localStorage.getItem("appLang") || "pt");
+    setCarregado(true);
+  }, []);
+
+  const t = {
+    pt: {
+      back: "Voltar", title: "Estatísticas",
+      stat1: "Diários Concluídos", stat2: "Dias de Streak", stat3: "Check-ups"
+    },
+    en: {
+      back: "Back", title: "Statistics",
+      stat1: "Completed Diaries", stat2: "Streak Days", stat3: "Check-ups"
+    }
+  };
+
+  const currentT = lang === "pt" ? t.pt : t.en;
 
   const stats = [
-    { title: "Diários Concluídos", value: "24", icon: Target, color: "text-cyan-400" },
-    { title: "Dias de Streak", value: "12", icon: TrendingUp, color: "text-emerald-400" },
-    { title: "Check-ups", value: "08", icon: Calendar, color: "text-cyan-300" },
+    { title: currentT.stat1, value: "24", icon: Target, color: "text-cyan-400" },
+    { title: currentT.stat2, value: "12", icon: TrendingUp, color: "text-emerald-400" },
+    { title: currentT.stat3, value: "08", icon: Calendar, color: "text-cyan-300" },
   ];
+
+  if (!carregado) return <div className="min-h-screen bg-[#05070a]" />;
 
   return (
     <main className={`min-h-screen p-6 flex flex-col items-center ${arima.className}`}>
@@ -23,13 +46,14 @@ export default function Estatisticas() {
       <button 
         onClick={() => router.push("/")}
         className="absolute top-8 left-8 p-3 rounded-full bg-white/[0.03] border border-white/10 backdrop-blur-md hover:bg-white/[0.08] transition-all text-cyan-400 shadow-lg"
+        aria-label={currentT.back}
       >
         <ArrowLeft size={24} />
       </button>
 
       {/* Container Principal */}
       <div className="w-full max-w-4xl mt-20 space-y-6">
-        <h1 className="text-4xl font-bold text-white mb-8">Estatísticas</h1>
+        <h1 className="text-4xl font-bold text-white mb-8">{currentT.title}</h1>
 
         {/* Grid de Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

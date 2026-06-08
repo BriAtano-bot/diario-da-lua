@@ -1,34 +1,57 @@
 "use client";
-
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Arima } from "next/font/google";
 import { BookOpen, CalendarDays, CheckSquare, BarChart3, HeartPulse } from "lucide-react";
-import { useEffect, useState } from "react";
+import pt from "../locales/pt.json";
+import en from "../locales/en.json";
 
-const arima = Arima({ subsets: ["latin"], weight: ["400", "700"], display: "swap" });
+const arima = Arima({ subsets: ["latin"], weight: ["400", "700"] });
 
 export default function Home() {
   const router = useRouter();
+  const [lang, setLang] = useState("pt");
   const [isMobile, setIsMobile] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Deteta o tamanho do ecrã para ajustar o círculo
   useEffect(() => {
+    setMounted(true);
+    const savedLang = localStorage.getItem("appLang") || "pt";
+    setLang(savedLang);
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
     checkMobile();
     window.addEventListener('resize', checkMobile);
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  const t = lang === "pt" ? pt : en;
+  
+  // A proteção ?. impede o erro se "home" não estiver disponível
   const menuItems = [
-    { name: "Diário", path: "/diario", icon: BookOpen, color: "text-cyan-400" },
-    { name: "Agenda", path: "/calendario", icon: CalendarDays, color: "text-emerald-400" },
-    { name: "Check-Up", path: "/checkup", icon: CheckSquare, color: "text-cyan-300" },
-    { name: "Estatísticas", path: "/estatisticas", icon: BarChart3, color: "text-emerald-300" },
-    { name: "Apoio", path: "/apoio", icon: HeartPulse, color: "text-cyan-400" },
+    { name: t.home?.diary || "Diary", path: "/diario", icon: BookOpen, color: "text-cyan-400" },
+    { name: t.home?.schedule || "Schedule", path: "/calendario", icon: CalendarDays, color: "text-emerald-400" },
+    { name: t.home?.checkup || "Check-up", path: "/checkup", icon: CheckSquare, color: "text-cyan-300" },
+    { name: t.home?.stats || "Stats", path: "/estatisticas", icon: BarChart3, color: "text-emerald-300" },
+    { name: t.home?.support || "Support", path: "/apoio", icon: HeartPulse, color: "text-cyan-400" },
   ];
 
+  if (!mounted) return null;
+
   return (
-    <main className={`min-h-screen flex items-center justify-center p-6 overflow-hidden ${arima.className}`}>
+    <main className={`min-h-screen flex flex-col items-center justify-center ${arima.className} bg-[#05070a]`}>
+      
+      {/* Botão de troca rápida de língua */}
+      <button 
+        onClick={() => {
+          const newLang = lang === "pt" ? "en" : "pt";
+          setLang(newLang);
+          localStorage.setItem("appLang", newLang);
+        }} 
+        className="absolute top-4 right-4 z-50 text-white/50 text-xs hover:text-white"
+      >
+        {lang === "pt" ? "PT ➔ EN" : "EN ➔ PT"}
+      </button>
+
       <div className="moon-bg" />
 
       <div className="relative flex items-center justify-center w-full max-w-2xl aspect-square">
@@ -48,7 +71,7 @@ export default function Home() {
           
           return (
             <div
-              key={item.name}
+              key={item.path}
               className="absolute transition-all duration-500"
               style={{
                 left: `calc(50% + ${Math.cos(angle) * radius}px)`,

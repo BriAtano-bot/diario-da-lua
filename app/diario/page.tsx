@@ -1,10 +1,21 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { 
+  Smile, Frown, Meh, Angry, Laugh, 
+  BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging,
+  Send, Save, ArrowLeft, ChevronDown 
+} from "lucide-react";
+
+import pt from "../../locales/pt.json";
+import en from "../../locales/en.json";
 
 export default function Diario() {
   const router = useRouter();
+  const [lang, setLang] = useState<"pt" | "en">("pt");
+  const [carregado, setCarregado] = useState(false);
+  
   const [texto, setTexto] = useState("");
   const [humor, setHumor] = useState("");
   const [ansiedade, setAnsiedade] = useState("");
@@ -13,113 +24,102 @@ export default function Diario() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
 
-  const escalaHumor = [
-    { emoji: "💖", label: "Incrível" }, { emoji: "🙂", label: "Bem" },
-    { emoji: "😐", label: "Neutro" }, { emoji: "🙁", label: "Baixo" }, { emoji: "😭", label: "Exausto" }
-  ];
+  useEffect(() => {
+    const savedLang = (localStorage.getItem("appLang") as "pt" | "en") || "pt";
+    setLang(savedLang);
+    setCarregado(true);
+  }, []);
 
-  const escalaNiveis = [
-    { emoji: "🟢", label: "Baixo" }, { emoji: "🟡", label: "Médio" },
-    { emoji: "🟠", label: "Alto" }, { emoji: "🔴", label: "Crítico" }
-  ];
+  const data = lang === "pt" ? pt : en;
+  const t = (data as any)?.diary || {};
 
+  const escalaHumor = [Laugh, Smile, Meh, Frown, Angry];
+  const escalaNiveis = [BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging];
   const contactosApoio = ["Mãe", "Terapeuta Rita", "Pai", "Irmã", "Linha SOS"];
 
-  const handleEnviarEmail = () => {
-    if (!contactoSelecionado) return alert("Seleciona um contacto de apoio!");
-    const corpo = encodeURIComponent(`Humor: ${humor}\nAnsiedade: ${ansiedade}\nStress: ${stress}\n\nDesabafo: ${texto}`);
-    window.location.href = `mailto:?subject=Partilha do Diário&body=${corpo}`;
-  };
-
-  const handleGuardar = () => {
-    const jaEnviouEmail = confirm("Já enviaste este registo para o teu email para segurança? \n\n(Se não, clica em 'Cancelar' para enviar agora)");
-    if (!jaEnviouEmail) {
-      alert("Por favor, envia o teu registo por email antes de o guardares aqui!");
-      return;
-    }
-    const agora = new Date();
-    const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
-    const dadosAtuais = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
-    const jaExistia = !!dadosAtuais[hoje];
-    dadosAtuais[hoje] = { ...dadosAtuais[hoje], diario: true, texto, humor, ansiedade, stress, data: hoje };
-    localStorage.setItem("diario_da_lua_registos", JSON.stringify(dadosAtuais));
-    alert(jaExistia ? "Diário atualizado com sucesso! 🌙✨" : "Diário registado com sucesso! 🌙✨");
-    setMostrarModal(false);
-    router.push("/calendario");
-  };
+  if (!carregado) return <main className="min-h-screen bg-[#05070a]" />;
 
   return (
-    <main className="relative flex min-h-screen w-full flex-col items-center justify-start px-4 py-8 antialiased overflow-hidden">
-      <div className="moon-bg" />
-
+    <main className="relative flex min-h-screen w-full flex-col items-center justify-start px-4 py-8 text-white">
       {mostrarModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-md">
-          <div className="glass-panel max-w-sm w-full text-center">
-            <h3 className="text-2xl font-light mb-6">Guardar registo?</h3>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
+          <div className="glass-panel max-w-sm w-full p-6 rounded-3xl border border-white/10 bg-[#1a1c22]">
+            <h3 className="text-2xl font-light mb-6 text-center">{t.confirm}</h3>
             <div className="flex gap-4 justify-center">
-              <button onClick={() => setMostrarModal(false)} className="btn-glass px-6 py-2 rounded-xl">Voltar</button>
-              <button onClick={handleGuardar} className="btn-primary-glass px-6 py-2 rounded-xl font-bold">Confirmar</button>
+              <button onClick={() => setMostrarModal(false)} className="btn-glass px-6 py-2 rounded-xl">{t.backBtn}</button>
+              <button onClick={() => {
+                const hoje = new Date().toISOString().split('T')[0];
+                const dados = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
+                dados[hoje] = { ...dados[hoje], diario: true, texto, humor, ansiedade, stress, data: hoje };
+                localStorage.setItem("diario_da_lua_registos", JSON.stringify(dados));
+                router.push("/calendario");
+              }} className="btn-primary-glass px-6 py-2 rounded-xl font-bold">{t.confirmBtn}</button>
             </div>
           </div>
         </div>
       )}
 
-      <div className="relative z-10 w-full max-w-3xl flex flex-col items-center">
-        <header className="w-full flex items-center justify-between mb-8">
-          <button onClick={() => router.push("/")} className="btn-glass px-4 py-2 rounded-xl">← Voltar</button>
-          <h1 className="text-3xl font-light tracking-wide">🌙 Diário da Lua</h1>
+      <div className="relative z-10 w-full max-w-3xl">
+        <header className="flex items-center justify-between mb-8">
+          <button onClick={() => router.push("/")} className="btn-glass px-4 py-2 rounded-xl flex items-center gap-2">
+            <ArrowLeft size={18} /> {t.back}
+          </button>
+          <h1 className="text-3xl font-light">{t.title}</h1>
         </header>
 
-        <div className="glass-panel w-full flex flex-col gap-6">
-          {/* Humor */}
+        <div className="glass-panel w-full flex flex-col gap-6 p-6 rounded-3xl bg-white/[0.02] border border-white/5">
           <div className="p-4 rounded-2xl border border-white/5">
-            <h3 className="text-lg font-light mb-3">Como está o teu Humor?</h3>
+            <h3 className="mb-3 font-light">{t.mood}</h3>
             <div className="flex flex-wrap gap-2">
-              {escalaHumor.map((item) => (
-                <button key={item.label} onClick={() => setHumor(item.label)} className={`px-4 py-1.5 rounded-full border transition-all ${humor === item.label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
-                  {item.emoji} {item.label}
-                </button>
-              ))}
+              {t.humorLabels?.map((label: string, i: number) => {
+                const Icon = escalaHumor[i];
+                return (
+                  <button key={label} onClick={() => setHumor(label)} className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all ${humor === label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
+                    <Icon size={18} /> {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* Ansiedade e Stress */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {["Ansiedade", "Stress"].map((tipo) => (
+            {[t.anxiety, t.stress].map((tipo: string) => (
               <div key={tipo} className="p-4 rounded-2xl border border-white/5">
-                <h3 className="text-lg font-light mb-3">{tipo}:</h3>
+                <h3 className="mb-3 font-light">{tipo}:</h3>
                 <div className="flex flex-wrap gap-1.5">
-                  {escalaNiveis.map((lvl) => (
-                    <button key={lvl.label} onClick={() => tipo === "Ansiedade" ? setAnsiedade(lvl.label) : setStress(lvl.label)} className={`px-3 py-1 rounded-full border transition-all ${(tipo === "Ansiedade" ? ansiedade : stress) === lvl.label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
-                      {lvl.emoji} {lvl.label}
-                    </button>
-                  ))}
+                  {t.levelLabels?.map((label: string, i: number) => {
+                    const Icon = escalaNiveis[i];
+                    return (
+                      <button key={label} onClick={() => tipo === t.anxiety ? setAnsiedade(label) : setStress(label)} className={`flex items-center gap-1 px-3 py-1 rounded-full border transition-all ${(tipo === t.anxiety ? ansiedade : stress) === label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
+                        <Icon size={16} /> {label}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             ))}
           </div>
 
-          <textarea value={texto} onChange={(e) => setTexto(e.target.value)} className="input-glass w-full min-h-[150px] text-lg resize-none" placeholder="O que tens no coração?" />
+          <textarea value={texto} onChange={(e) => setTexto(e.target.value)} className="input-glass w-full min-h-[150px] p-4 rounded-xl bg-white/5 border border-white/10" placeholder={t.placeholder} />
 
-          {/* Ações Finais */}
           <div className="flex flex-col gap-4">
             <div className="flex items-center gap-2 relative">
-              <div className="input-glass flex justify-between items-center cursor-pointer text-white/70 w-full" onClick={() => setMenuAberto(!menuAberto)}>
-                {contactoSelecionado || "Apoio..."}
-                <span className="text-xs">▼</span>
+              <div className="input-glass flex justify-between items-center cursor-pointer w-full p-3 rounded-xl bg-white/5 border border-white/10" onClick={() => setMenuAberto(!menuAberto)}>
+                {contactoSelecionado || t.support}
+                <ChevronDown size={16} />
               </div>
               {menuAberto && (
-                <div className="absolute top-full mt-2 w-full bg-[#05070a] border border-white/20 rounded-xl overflow-hidden z-50 shadow-xl">
-                  {contactosApoio.map((c) => (
-                    <div key={c} onClick={() => { setContactoSelecionado(c); setMenuAberto(false); }} className="px-4 py-3 hover:bg-white/10 cursor-pointer text-white">
-                      {c}
-                    </div>
+                <div className="absolute bottom-full mb-2 w-full bg-[#1a1c22] border border-white/20 rounded-xl overflow-hidden z-50">
+                  {contactosApoio.map((c: string) => (
+                    <div key={c} onClick={() => { setContactoSelecionado(c); setMenuAberto(false); }} className="px-4 py-3 hover:bg-white/10 cursor-pointer">{c}</div>
                   ))}
                 </div>
               )}
-              <button onClick={handleEnviarEmail} className="btn-glass px-4 py-3 rounded-xl whitespace-nowrap">Enviar 💌</button>
+              <button onClick={() => window.location.href = `mailto:?subject=Diário&body=${texto}`} className="btn-glass px-4 py-3 rounded-xl flex items-center gap-2"><Send size={18} /> {t.send}</button>
             </div>
-            <button onClick={() => setMostrarModal(true)} className="btn-primary-glass w-full px-8 py-3 rounded-xl font-medium text-lg">Guardar Registo 📅</button>
+            <button onClick={() => setMostrarModal(true)} className="btn-primary-glass w-full py-4 rounded-xl font-bold text-lg flex items-center justify-center gap-2">
+              <Save size={20} /> {t.save}
+            </button>
           </div>
         </div>
       </div>

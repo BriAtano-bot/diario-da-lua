@@ -1,121 +1,112 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { 
+  Smile, Frown, Meh, Angry, Laugh, 
+  BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging 
+} from "lucide-react";
 
 export default function Checkup() {
   const router = useRouter();
-
+  const [lang, setLang] = useState("pt");
+  const [carregado, setCarregado] = useState(false);
   const [coisaBoa, setCoisaBoa] = useState("");
   const [sono, setSono] = useState("");
   const [energia, setEnergia] = useState("");
   const [autoCuidado, setAutoCuidado] = useState<string[]>([]);
 
-  const opcoesSono = [
-    { emoji: "😴", label: "Exausto" }, { emoji: "🥱", label: "Mal" },
-    { emoji: "😐", label: "Mais ou menos" }, { emoji: "🙂", label: "Bem" }, { emoji: "🌟", label: "Lindamente" }
-  ];
+  useEffect(() => {
+    const savedLang = localStorage.getItem("appLang") || "pt";
+    setLang(savedLang);
+    setCarregado(true);
+  }, []);
 
-  const opcoesEnergia = [
-    { emoji: "🪫", label: "Esgotada" }, { emoji: "📉", label: "Baixa" },
-    { emoji: "⚡", label: "Normal" }, { emoji: "🔋", label: "Cheia" }
-  ];
-
-  const rotinasCuidado = [
-    { id: "agua", label: "Beber água suficiente 💧" },
-    { id: "Ar Livre", label: "Apanhar ar fresco/Caminhar 🚶‍♀️" },
-    { id: "pausa", label: "Fazer uma pausa dos ecrãs 📵" },
-    { id: "leitura", label: "Ler ou ouvir música 📚🎵" },
-    { id: "social", label: "Conversar com alguém querido 🤍" }
-  ];
-
-  const toggleCuidado = (id: string) => {
-    setAutoCuidado(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
-  };
-
-  const handleGuardarCheckup = () => {
-    const agora = new Date();
-    const hoje = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-${String(agora.getDate()).padStart(2, '0')}`;
-
-    const dadosAtuais = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
-    dadosAtuais[hoje] = {
-      ...dadosAtuais[hoje],
-      checkup: true,
-      checkupDados: { coisaBoa, sono, energia, autoCuidado }
-    };
-
-    localStorage.setItem("diario_da_lua_registos", JSON.stringify(dadosAtuais));
-    alert("Check-up concluído com sucesso! 🌙✨");
+  const handleGuardar = () => {
+    const hoje = new Date().toISOString().split('T')[0];
+    const dados = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
+    dados[hoje] = { ...dados[hoje], checkup: true, checkupDados: { coisaBoa, sono, energia, autoCuidado } };
+    localStorage.setItem("diario_da_lua_registos", JSON.stringify(dados));
     router.push("/calendario");
   };
 
-  return (
-    <main className="relative flex min-h-screen w-full flex-col items-center justify-start px-4 py-8 antialiased">
-      <div className="moon-bg" />
+  // Traduções diretas para evitar problemas com JSON
+  const t = {
+    pt: {
+      header: "Balanço", title: "Check-up", back: "← Voltar",
+      goodThing: "Conta-me uma coisa boa de hoje ...", placeholder: "Escreve...",
+      sleep: "Sono?", energy: "Energia?", save: "Guardar",
+      sleepLabels: ["Exausto", "Mal", "Médio", "Bem", "Lindamente"],
+      energyLabels: ["Esgotada", "Baixa", "Normal", "Cheia"]
+    },
+    en: {
+      header: "Balance", title: "Check-up", back: "← Back",
+      goodThing: "Tell me one good thing about today ...", placeholder: "Write here...",
+      sleep: "Sleep?", energy: "Energy?", save: "Save",
+      sleepLabels: ["Exhausted", "Poor", "Average", "Good", "Beautifully"],
+      energyLabels: ["Drained", "Low", "Normal", "Full"]
+    }
+  };
 
-      <div className="relative z-10 w-full max-w-2xl flex flex-col items-center">
-        <header className="w-full flex items-center justify-between mb-8">
-          <button onClick={() => router.push("/")} className="btn-glass px-4 py-2 rounded-xl">← Voltar</button>
-          <div className="text-2xl font-light text-[#cbd5e1]">✨ Balanço do Dia</div>
+  const currentT = lang === "pt" ? t.pt : t.en;
+
+  const iconesSono = [Frown, Meh, Meh, Smile, Laugh];
+  const iconesEnergia = [BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging];
+
+  if (!carregado) return <div className="min-h-screen bg-[#05070a]" />;
+
+  return (
+    <main className="relative flex min-h-screen w-full flex-col items-center justify-start px-4 py-8 text-white">
+      <div className="moon-bg" />
+      <div className="relative z-10 w-full max-w-2xl">
+        <header className="flex items-center justify-between mb-8">
+          <button onClick={() => router.push("/")} className="btn-glass px-4 py-2 rounded-xl">{currentT.back}</button>
+          <div className="text-xl font-light">{currentT.header}</div>
         </header>
 
-        <div className="glass-panel w-full flex flex-col gap-6">
-          <h1 className="text-3xl font-light text-center text-[#cbd5e1] mb-2">O Meu Check-up 🌙</h1>
+        <div className="glass-panel w-full flex flex-col gap-6 p-6 rounded-3xl bg-white/[0.02]">
+          <h1 className="text-3xl font-light text-center mb-2">{currentT.title}</h1>
 
-          {/* 1. Coisa Boa */}
           <div className="p-4 rounded-2xl border border-white/5">
-            <h3 className="text-lg font-light text-[#cbd5e1] mb-3">🌸 Uma coisa boa que aconteceu hoje?</h3>
-            <input
-              type="text"
-              value={coisaBoa}
-              onChange={(e) => setCoisaBoa(e.target.value)}
-              placeholder="Até o mais pequeno detalhe conta..."
-              className="input-glass w-full"
-              autoComplete="off"
+            <h3 className="mb-3">{currentT.goodThing}</h3>
+            <input 
+              type="text" 
+              value={coisaBoa} 
+              onChange={(e) => setCoisaBoa(e.target.value)} 
+              className="input-glass w-full p-3 rounded-xl bg-white/5 border border-white/10" 
+              placeholder={currentT.placeholder} 
             />
           </div>
 
-          {/* 2. Sono */}
           <div className="p-4 rounded-2xl border border-white/5">
-            <h3 className="text-lg font-light text-[#cbd5e1] mb-3">💤 Como dormiste na última noite?</h3>
+            <h3 className="mb-3">{currentT.sleep}</h3>
             <div className="flex flex-wrap gap-2">
-              {opcoesSono.map((item) => (
-                <button key={item.label} onClick={() => setSono(item.label)} className={`px-4 py-1.5 rounded-full border transition-all ${sono === item.label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
-                  <span>{item.emoji}</span> {item.label}
-                </button>
-              ))}
+              {currentT.sleepLabels.map((label, i) => {
+                const Icon = iconesSono[i];
+                return (
+                  <button key={i} onClick={() => setSono(label)} className={`flex items-center gap-2 px-4 py-2 rounded-full border ${sono === label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
+                    <Icon size={18} /> {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* 3. Energia */}
           <div className="p-4 rounded-2xl border border-white/5">
-            <h3 className="text-lg font-light text-[#cbd5e1] mb-3">🔋 Como sentes a tua energia agora?</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              {opcoesEnergia.map((item) => (
-                <button key={item.label} onClick={() => setEnergia(item.label)} className={`flex flex-col items-center p-3 rounded-xl border transition-all ${energia === item.label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
-                  <span className="text-2xl">{item.emoji}</span>
-                  <span className="text-sm font-medium">{item.label}</span>
-                </button>
-              ))}
+            <h3 className="mb-3">{currentT.energy}</h3>
+            <div className="grid grid-cols-2 gap-2">
+              {currentT.energyLabels.map((label, i) => {
+                const Icon = iconesEnergia[i];
+                return (
+                  <button key={i} onClick={() => setEnergia(label)} className={`flex items-center p-3 rounded-xl border ${energia === label ? "bg-indigo-500/30 border-indigo-400" : "btn-glass"}`}>
+                    <Icon size={20} className="mr-2" /> {label}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
-          {/* 4. Auto-Cuidado */}
-          <div className="p-4 rounded-2xl border border-white/5">
-            <h3 className="text-lg font-light text-[#cbd5e1] mb-3">🌿 Conquistas de auto-cuidado:</h3>
-            <div className="flex flex-col gap-2">
-              {rotinasCuidado.map((item) => (
-                <label key={item.id} className="flex items-center gap-3 p-3 rounded-xl border border-white/5 bg-white/5 cursor-pointer hover:bg-white/10 transition-all">
-                  <input type="checkbox" checked={autoCuidado.includes(item.id)} onChange={() => toggleCuidado(item.id)} className="w-5 h-5 accent-indigo-400" />
-                  <span className="text-[#d1d5db]">{item.label}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          <button onClick={handleGuardarCheckup} className="btn-primary-glass w-full py-3 rounded-xl font-medium text-lg">
-            Concluir Check-up do Dia 📋🌙
-          </button>
+          <button onClick={handleGuardar} className="btn-primary-glass w-full py-4 rounded-xl font-bold">{currentT.save}</button>
         </div>
       </div>
     </main>
