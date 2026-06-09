@@ -2,38 +2,58 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
-import { 
-  ChevronLeft, ChevronRight, Moon, Star, Calendar, 
-  Smile, BookOpen, Brain, Flame, Sparkles, BatteryCharging, Heart 
+import {
+  ChevronLeft, ChevronRight, Moon, Star, Calendar,
+  Smile, Brain, Flame, Sparkles, BatteryCharging, Heart
 } from "lucide-react";
-import pt from "../../locales/pt.json";
-import en from "../../locales/en.json";
+
+// Tradução embutida (zero erros de tipagem)
+const traducoes = {
+  pt: {
+    title: "Calendário",
+    menu: "Menu",
+    dayDetail: "Detalhes de",
+    noSelection: "Selecione um dia.",
+    noRecords: "Sem registos.",
+    mood: "Humor:",
+    ansiedade: "Ansiedade:",
+    stress: "Stress:",
+    goodThing: "Coisa boa:",
+    energy: "Energia:",
+    care: "Auto-cuidado:"
+  },
+  en: {
+    title: "Calendar",
+    menu: "Menu",
+    dayDetail: "Details for",
+    noSelection: "Select a day.",
+    noRecords: "No records.",
+    mood: "Mood:",
+    ansiedade: "Anxiety:",
+    stress: "Stress:",
+    goodThing: "Good thing:",
+    energy: "Energy:",
+    care: "Self-care:"
+  }
+};
 
 export default function Calendario() {
   const router = useRouter();
-  const [lang, setLang] = useState("pt");
+  const [lang, setLang] = useState<"pt" | "en">("pt");
   const [carregado, setCarregado] = useState(false);
   const [registos, setRegistos] = useState<any>({});
   const [diaSelecionado, setDiaSelecionado] = useState<string | null>(null);
   const [dataAtual, setDataAtual] = useState(new Date());
 
   useEffect(() => {
-    const savedLang = localStorage.getItem("appLang") || "pt";
+    const savedLang = (localStorage.getItem("appLang") || "pt") as "pt" | "en";
     setLang(savedLang);
     const dados = JSON.parse(localStorage.getItem("diario_da_lua_registos") || "{}");
     setRegistos(dados);
     setCarregado(true);
   }, []);
 
-  const data = lang === "pt" ? pt : en;
-  
-  // Objeto de proteção: Se data.calendar for undefined, usa este objeto por defeito
-  const t = data?.calendar || {
-    title: "Calendar", menu: "Menu", dayDetail: "Detail", 
-    noSelection: "Select a day.", noRecords: "No records.",
-    mood: "Mood:", anxiety: "Anxiety:", stress: "Stress:", 
-    goodThing: "Good thing:", energy: "Energy:", care: "Self-care:"
-  };
+  const t = traducoes[lang];
 
   const mesAtualIndex = dataAtual.getMonth();
   const anoAtual = dataAtual.getFullYear();

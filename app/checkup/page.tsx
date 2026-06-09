@@ -4,20 +4,50 @@ import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { 
   Smile, Frown, Meh, Angry, Laugh, 
-  BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging 
+  BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging, LucideIcon 
 } from "lucide-react";
+
+interface TraducaoCheckup {
+  header: string;
+  title: string;
+  back: string;
+  goodThing: string;
+  placeholder: string;
+  sleep: string;
+  energy: string;
+  save: string;
+  sleepLabels: string[];
+  energyLabels: string[];
+}
+
+const t: { pt: TraducaoCheckup; en: TraducaoCheckup } = {
+  pt: {
+    header: "Balanço", title: "Check-up", back: "← Voltar",
+    goodThing: "Conta-me uma coisa boa de hoje ...", placeholder: "Escreve...",
+    sleep: "Sono?", energy: "Energia?", save: "Guardar",
+    sleepLabels: ["Exausto", "Mal", "Médio", "Bem", "Lindamente"],
+    energyLabels: ["Esgotada", "Baixa", "Normal", "Cheia"]
+  },
+  en: {
+    header: "Balance", title: "Check-up", back: "← Back",
+    goodThing: "Tell me one good thing about today ...", placeholder: "Write here...",
+    sleep: "Sleep?", energy: "Energy?", save: "Save",
+    sleepLabels: ["Exhausted", "Poor", "Average", "Good", "Beautifully"],
+    energyLabels: ["Drained", "Low", "Normal", "Full"]
+  }
+};
 
 export default function Checkup() {
   const router = useRouter();
-  const [lang, setLang] = useState("pt");
+  const [lang, setLang] = useState<"pt" | "en">("pt");
   const [carregado, setCarregado] = useState(false);
   const [coisaBoa, setCoisaBoa] = useState("");
   const [sono, setSono] = useState("");
   const [energia, setEnergia] = useState("");
-  const [autoCuidado, setAutoCuidado] = useState<string[]>([]);
+  const [autoCuidado] = useState<string[]>([]); // Mantido para compatibilidade
 
   useEffect(() => {
-    const savedLang = localStorage.getItem("appLang") || "pt";
+    const savedLang = (localStorage.getItem("appLang") || "pt") as "pt" | "en";
     setLang(savedLang);
     setCarregado(true);
   }, []);
@@ -30,28 +60,9 @@ export default function Checkup() {
     router.push("/calendario");
   };
 
-  // Traduções diretas para evitar problemas com JSON
-  const t = {
-    pt: {
-      header: "Balanço", title: "Check-up", back: "← Voltar",
-      goodThing: "Conta-me uma coisa boa de hoje ...", placeholder: "Escreve...",
-      sleep: "Sono?", energy: "Energia?", save: "Guardar",
-      sleepLabels: ["Exausto", "Mal", "Médio", "Bem", "Lindamente"],
-      energyLabels: ["Esgotada", "Baixa", "Normal", "Cheia"]
-    },
-    en: {
-      header: "Balance", title: "Check-up", back: "← Back",
-      goodThing: "Tell me one good thing about today ...", placeholder: "Write here...",
-      sleep: "Sleep?", energy: "Energy?", save: "Save",
-      sleepLabels: ["Exhausted", "Poor", "Average", "Good", "Beautifully"],
-      energyLabels: ["Drained", "Low", "Normal", "Full"]
-    }
-  };
-
-  const currentT = lang === "pt" ? t.pt : t.en;
-
-  const iconesSono = [Frown, Meh, Meh, Smile, Laugh];
-  const iconesEnergia = [BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging];
+  const currentT = t[lang];
+  const iconesSono: LucideIcon[] = [Frown, Meh, Meh, Smile, Laugh];
+  const iconesEnergia: LucideIcon[] = [BatteryLow, BatteryMedium, BatteryWarning, BatteryCharging];
 
   if (!carregado) return <div className="min-h-screen bg-[#05070a]" />;
 
